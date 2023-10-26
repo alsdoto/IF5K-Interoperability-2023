@@ -12,4 +12,9 @@ class Post extends Model
 
 //     define cloumn name
     protected $fillable = array('title', 'content', 'status', 'user_id');
+
+//      untuk melakukan update field create_at dan update_at secara otomatis
+    public $timestamps = true;
+
 }
+

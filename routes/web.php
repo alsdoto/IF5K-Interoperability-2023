@@ -71,3 +71,16 @@ $router->get('/table5/{id}', 'Table5Controller@show');
 $router->post('/table5', 'Table5Controller@store');
 $router->put('/table5/{id}', 'Table5Controller@update');
 $router->delete('/table5/{id}', 'Table5Controller@destroy');
+
+$router->get('/posts', 'PostsController@index');
+$router->post('/posts', 'PostsController@store');
+$router->get('/post/{id}', 'PostsController@show');
+$router->put('/post/{id}', 'PostsController@update');
+$router->delete('/post/{id}', 'PostsController@destroy');
+
+$router->get('/products', 'ProductController@index');
+$router->get('/products/{id}', 'ProductController@show');
+$router->post('/products', 'ProductController@store');
+$router->put('/products/{id}', 'ProductController@update');
+$router->delete('/products/{id}', 'ProductController@destroy');
+
