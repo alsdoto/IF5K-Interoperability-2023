@@ -9,35 +9,17 @@ class PostsController extends Controller
 {
     public function index(Request $request)
     {
-        $acceptHeader = $request->header('Accept');
-
-        if ($acceptHeader === 'application/json' || $acceptHeader === 'application/xml'){
-            $posts = Post::OrderBy("id", "DESC")->paginate(10);
-
-            if ($acceptHeader === 'application/json') {
-                //response json
-                return response()->json($posts->items('data'), 200);
-            } else {
-                //create xml posts element
-                $xml = new \SimpleXMLElement('<post/>');
-                foreach ($posts->items('data') as $item) {
-                    //create xml post element
-                    $xmlItem = $xml->addChild('post');
-                    
-                    //mengubah setiap field post menjadi bentuk xml
-                    $xmlItem->addChild('id', $item->id);
-                    $xmlItem->addChild('title', $item->title);
-                    $xmlItem->addChild('status', $item->status);
-                    $xmlItem->addChild('content', $item->content);
-                    $xmlItem->addChild('user_id', $item->user_id);
-                    $xmlItem->addChild('created_at', $item->created_at);
-                    $xmlItem->addChild('update_at', $item->update_at);
-                }
-                return $xml->asXML();
-            }
-        } else {
-            return response('Not Acceptable!', 406);
-        }
+       $posts = Post::OrderBy("id", "DESC")->paginate(2)->toArray();
+       $response = [
+        "total_count" => $posts["total"],
+        "limit" => $posts["per_page"],
+        "pagination" => [
+            "next_page" => $posts["next_page_url"],
+            "current_page" => $posts["current_page"]
+        ],
+        "data" => $posts["data"],
+        ];
+        return response()->json($response, 200);
     }
 
     /**
@@ -48,29 +30,31 @@ class PostsController extends Controller
     */
     public function store(Request $request)
     {
-        $acceptHeader = $request->header('Accept');
+        $input = $request->all();
 
-        if ($acceptHeader === 'application/json') {
-            // Lakukan proses penyimpanan data
-            $post = new Post;
-            $post->title = $request->title;
-            $post->content = $request->content;
-            $post->status = $request->status;
-            $post->user_id = $request->user_id;
-            $post->save();
+        $post = $Post::find($id);
 
-            return response()->json(['message' => 'Post created successfully'], 201);
-        } elseif ($acceptHeader === 'application/xml') {
-            // Buat dan kembalikan data dalam format XML
-            $xml = new \SimpleXMLElement('<post/>');
-            $xml->addChild('title', $request->title);
-            $xml->addChild('content', $request->content);
-            $xml->addChild('status', $request->status);
-            $xml->addChild('user_id', $request->user_id);
-            return response($xml->asXML(), 201)->header('Content-Type', 'application/xml');
-        } else {
-            return response('Unsupported Media Type', 415);
+        if(!$post) {
+            abort(404);
         }
+
+        $validationRules = [
+            'title' => 'required|min:5',
+            'content' => 'required|min:10',
+            'status' => 'required|in:draft,published',
+            'user_id' => 'required|exists:users,id',
+        ];
+
+        $validator = \Validator::make($input, $validationRules);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+        $post->fill($input);
+        $post->save();
+
+        return response()->json($post, 200);
     }
 
         

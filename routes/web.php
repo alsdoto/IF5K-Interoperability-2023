@@ -29,18 +29,17 @@ $router->get('/scores', ['middleware' => 'login', function (){
     return "<h1>Selamat</h1><p>Nilai anda 100</p>";
 }]);
 
-// $router->get('/users', 'UsersController@index');
-
-//1
 $router->get('/', 'ServiceController@getServiceStatus');
-
-// 2
 $router->get('/users', 'UsersController@getUsers');
-
-// 3
 $router->get('/users/{userId}', 'UserController@getUserById');
+$router->post('/users', 'UsersController@store');
 
-$router->get('posts', 'PostsController@index');
+$router->get('/posts', 'PostsController@index');
+$router->post('/posts', 'PostsController@store');
+$router->get('/post/{id}', 'PostsController@show');
+$router->put('post{id}', 'PostsController@update');
+$router->delete('post/{id}', 'PostsController@destroy');
+
 
 $router->get('/table1', 'Table1Controller@index');
 $router->get('/table1/{id}', 'Table1Controller@show');
