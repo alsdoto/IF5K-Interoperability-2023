@@ -13,73 +13,23 @@
 |
 */
 
-// $router->get('/', function () use ($router) {
-//     return $router->app->version();
-// });
-
-$router->get('/hello-lumen', function () {
-    return "<h1>Lumen</h1><p>Hi good developer, thank for using Lumen</p>";
+$router->get('/', function () use ($router) {
+    return $router->app->version();
 });
 
-$router->get('/hello-lumen/{name}', function ($name) {
-    return "<h1>Lumen</h1><p>Hi <b>". $name ."</b>, thank for using Lumen</p>";
+$router->get('hello-lumen/{name}', function ($name) {
+    return "<h1>Lumen<h1/><p>Halo <b>" . $name ."</b>, terimakasih sudah menggunakan Lumen</p>";
 });
 
-$router->get('/scores', ['middleware' => 'login', function (){
-    return "<h1>Selamat</h1><p>Nilai anda 100</p>";
-}]);
+$router->get('/scores', [
+    'middleware' => 'login',
+    function () {
+        return "<h1>Selamat</h1><p>Hi Nilai anda 100</p>";
+    }
+]);
 
-$router->get('/', 'ServiceController@getServiceStatus');
-$router->get('/users', 'UsersController@getUsers');
-$router->get('/users/{userId}', 'UserController@getUserById');
-$router->post('/users', 'UsersController@store');
-
-$router->get('/posts', 'PostsController@index');
-$router->post('/posts', 'PostsController@store');
-$router->get('/post/{id}', 'PostsController@show');
-$router->put('post{id}', 'PostsController@update');
-$router->delete('post/{id}', 'PostsController@destroy');
-
-
-$router->get('/table1', 'Table1Controller@index');
-$router->get('/table1/{id}', 'Table1Controller@show');
-$router->post('/table1', 'Table1Controller@store');
-$router->put('/table1/{id}', 'Table1Controller@update');
-$router->delete('/table1/{id}', 'Table1Controller@destroy');
-
-$router->get('/table2', 'Table2Controller@index');
-$router->get('/table2/{id}', 'Table2Controller@show');
-$router->post('/table2', 'Table2Controller@store');
-$router->put('/table2/{id}', 'Table2Controller@update');
-$router->delete('/table2/{id}', 'Table2Controller@destroy');
-
-$router->get('/table3', 'Table3Controller@index');
-$router->get('/table3/{id}', 'Table3Controller@show');
-$router->post('/table3', 'Table3Controller@store');
-$router->put('/table3/{id}', 'Table3Controller@update');
-$router->delete('/table3/{id}', 'Table3Controller@destroy');
-
-$router->get('/table4', 'Table4Controller@index');
-$router->get('/table4/{id}', 'Table4Controller@show');
-$router->post('/table4', 'Table4Controller@store');
-$router->put('/table4/{id}', 'Table4Controller@update');
-$router->delete('/table4/{id}', 'Table4Controller@destroy');
-
-$router->get('/table5', 'Table5Controller@index');
-$router->get('/table5/{id}', 'Table5Controller@show');
-$router->post('/table5', 'Table5Controller@store');
-$router->put('/table5/{id}', 'Table5Controller@update');
-$router->delete('/table5/{id}', 'Table5Controller@destroy');
-
-$router->get('/posts', 'PostsController@index');
-$router->post('/posts', 'PostsController@store');
-$router->get('/post/{id}', 'PostsController@show');
-$router->put('/post/{id}', 'PostsController@update');
-$router->delete('/post/{id}', 'PostsController@destroy');
-
-$router->get('/products', 'ProductController@index');
-$router->get('/products/{id}', 'ProductController@show');
-$router->post('/products', 'ProductController@store');
-$router->put('/products/{id}', 'ProductController@update');
-$router->delete('/products/{id}', 'ProductController@destroy');
-
+$router->post('/login', 'AuthController@login');
+$router->group(['middleware' => 'auth'], function () use ($router) {
+    $router->get('/users', 'UsersController@index');
+    $router->get('/users/{id}', 'UsersController@show');
+});
